@@ -92,6 +92,11 @@
 
   var CAPITAL_GAINS_INCLUSION = 0.50;
 
+  // Charitable donations are creditable on up to 75% of net income in a
+  // year; the excess carries forward up to five years (100% in the year of
+  // death and the year before, which this tool does not model).
+  var NET_INCOME_LIMIT_RATE = 0.75;
+
   /*
    * Bracket where income falls: the rate applies from `from` until the next
    * threshold, so exactly $150,000 in ON reads the 117,046 bracket (43.41%).
@@ -145,18 +150,48 @@
 
     var mRate = marginalRate(income, province);
     var gain = Math.max(0, fmv - acb);
-    var capTax = gain * CAPITAL_GAINS_INCLUSION * mRate;
-    var credit = donationCredit(fmv, income, province);
+    var taxableGain = gain * CAPITAL_GAINS_INCLUSION;
+    var capTax = taxableGain * mRate;
+
+    // Year-one claim limit: 75% of net income, applied per scenario.
+    //  - Sell then donate cash (A): the sale realises the taxable gain, which
+    //    lifts net income, so the ceiling rises. The gift is cash, so there is
+    //    no capital-property augmentation.
+    //  - Donate shares in kind (B): the gain has a zero inclusion rate, so net
+    //    income is unchanged and the 25%-of-taxable-gain augmentation that
+    //    normally raises the limit for gifts of appreciated property is zero.
+    // The entered income stands in for net income (disclosed). Credit that
+    // cannot be claimed this year is not lost; it carries forward up to five
+    // years. These figures show year one.
+    var ceilingA = NET_INCOME_LIMIT_RATE * (income + taxableGain);
+    var ceilingB = NET_INCOME_LIMIT_RATE * income;
+    var claimableA = Math.min(fmv, ceilingA);
+    var claimableB = Math.min(fmv, ceilingB);
+
+    var creditA = donationCredit(claimableA, income, province);
+    var creditB = donationCredit(claimableB, income, province);
+
+    var costA = fmv - creditA + capTax;  // sell the shares, donate the cash
+    var costB = fmv - creditB;           // donate the shares directly
 
     return {
       receipt: fmv,
-      credit: credit,
+      creditA: creditA,
+      creditB: creditB,
       capTax: capTax,
-      costA: fmv - credit + capTax,  // sell the shares, donate the cash
-      costB: fmv - credit,           // donate the shares directly
-      savings: capTax,
+      costA: costA,
+      costB: costB,
+      savings: costA - costB,
       hasGain: gain > 0,
-      marginalRate: mRate
+      marginalRate: mRate,
+      ceilingA: ceilingA,
+      ceilingB: ceilingB,
+      claimableA: claimableA,
+      claimableB: claimableB,
+      cappedA: claimableA < fmv - 0.005,
+      cappedB: claimableB < fmv - 0.005,
+      deferredA: Math.max(0, fmv - claimableA),
+      deferredB: Math.max(0, fmv - claimableB)
     };
   }
 

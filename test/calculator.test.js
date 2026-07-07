@@ -12,11 +12,54 @@ test('worked example: ON, income $150,000, shares $25,000, cost $10,000', () => 
   const r = gg.compute({ province: 'ON', income: 150000, worth: 25000, paid: 10000 });
   close(r.marginalRate, 0.4341, 'marginal rate');
   close(r.capTax, 3255.75, 'capital gains tax if sold');
-  close(r.credit, 11553.44, 'donation credit');
+  // Well under the 75% ceiling, so both scenarios claim the full credit.
+  close(r.creditA, 11553.44, 'donation credit (sell)');
+  close(r.creditB, 11553.44, 'donation credit (in kind)');
   close(r.costA, 16702.31, 'cost A (sell, donate cash)');
   close(r.costB, 13446.56, 'cost B (donate shares)');
   close(r.savings, 3255.75, 'savings');
   assert.equal(r.hasGain, true);
+  assert.equal(r.cappedA, false);
+  assert.equal(r.cappedB, false);
+});
+
+test('75% limit: in-kind gift above the ceiling is capped this year', () => {
+  // Income $100,000, shares $90,000, cost $10,000. Gain $80,000, taxable
+  // half $40,000. In-kind ceiling = 0.75 x 100,000 = $75,000 (gift $90,000
+  // exceeds it). Sell-first ceiling = 0.75 x (100,000 + 40,000) = $105,000,
+  // so the cash route claims the full $90,000 this year.
+  const r = gg.compute({ province: 'ON', income: 100000, worth: 90000, paid: 10000 });
+  close(r.marginalRate, 0.3148, 'marginal rate at $100k ON');
+  assert.equal(r.cappedB, true);
+  assert.equal(r.cappedA, false);
+  close(r.ceilingB, 75000, 'in-kind ceiling');
+  close(r.ceilingA, 105000, 'sell-first ceiling');
+  close(r.deferredB, 15000, 'in-kind amount carried forward');
+  close(r.deferredA, 0, 'sell-first carries nothing forward');
+  close(r.creditB, (200 * (14 + 7.88) + 74800 * (29 + 17.41)) / 100, 'in-kind credit on $75,000');
+  close(r.creditA, (200 * (14 + 7.88) + 89800 * (29 + 17.41)) / 100, 'sell credit on $90,000');
+  close(r.capTax, 40000 * 0.3148, 'capital gains tax');
+  // Year one, the sell route claims more credit, so the shown saving is less
+  // than the full capital gains tax avoided (the gap reverses over the carryforward).
+  close(r.savings, r.costA - r.costB, 'savings is the cost difference');
+  assert.ok(r.savings > 0 && r.savings < r.capTax, 'savings positive but below capTax when in-kind is capped');
+});
+
+test('75% limit: both scenarios capped when the gift dwarfs income', () => {
+  const r = gg.compute({ province: 'ON', income: 100000, worth: 300000, paid: 0 });
+  assert.equal(r.cappedA, true);
+  assert.equal(r.cappedB, true);
+  // taxable gain 150,000 -> ceilingA = 0.75 x 250,000 = 187,500; ceilingB = 75,000.
+  close(r.ceilingA, 187500, 'sell-first ceiling');
+  close(r.ceilingB, 75000, 'in-kind ceiling');
+  close(r.claimableA, 187500, 'sell claim capped at ceiling');
+  close(r.claimableB, 75000, 'in-kind claim capped at ceiling');
+  close(r.savings, r.costA - r.costB, 'savings is the year-one cost difference');
+  // Known distortion of the year-one snapshot: when the gift dwarfs income,
+  // the sell route can claim so much more credit now that the year-one saving
+  // drops below the capital gains tax avoided, and can even go negative. The
+  // gap reverses over the five-year carryforward; the widget surfaces this.
+  assert.ok(r.savings < r.capTax, 'year-one saving is below the capTax avoided when heavily capped');
 });
 
 test('bracket boundary: exactly $150,000 in ON reads 43.41%, $150,001 reads 44.97%', () => {

@@ -51,6 +51,7 @@
     name: document.getElementById('gg-name'),
     email: document.getElementById('gg-email'),
     consent: document.getElementById('gg-consent'),
+    limitNote: document.getElementById('gg-limit-note'),
     formError: document.getElementById('gg-form-error'),
     submit: document.getElementById('gg-submit'),
     sent: document.getElementById('gg-sent'),
@@ -133,6 +134,32 @@
     raf = requestAnimationFrame(step);
   }
 
+  /* The 75%-of-net-income annual limit: explain the cap and the carryforward
+     when the gift is larger than what can be claimed this year. */
+  function limitNote(r) {
+    if (!r.hasGain) {
+      return 'You can claim the donation credit on up to 75% of net income, ' +
+        fmt(r.ceilingB) + ', in one year and carry the remaining ' + fmt(r.deferredB) +
+        ' forward up to five years. These figures show year one.';
+    }
+    if (r.cappedA && r.cappedB) {
+      var lead = r.savings <= 0.005
+        ? 'This gift is far larger than the income you entered, so the year-one view understates the benefit: selling first lets you claim much more of the credit now, while donating in kind defers more of it. '
+        : '';
+      return lead +
+        'You can claim the donation credit on up to 75% of net income in one year, ' +
+        fmt(r.ceilingB) + ' donating the shares directly or ' + fmt(r.ceilingA) +
+        ' if you sell first (the sale adds to your income), and carry the rest forward up to five years. ' +
+        'Over the life of the gift you still avoid ' + fmt(r.capTax) +
+        ' in capital gains tax. These figures show year one.';
+    }
+    // In-kind capped, sell route claims the full amount this year.
+    return 'Donating the shares directly, you can claim the credit on up to ' + fmt(r.ceilingB) +
+      ' this year (75% of net income) and carry the remaining ' + fmt(r.deferredB) +
+      ' forward up to five years. Selling first would let you claim the full amount now, because ' +
+      'the sale adds to your income. These figures show year one.';
+  }
+
   function update(animate) {
     var r = gg.compute({
       province: els.province.value,
@@ -142,22 +169,29 @@
     });
 
     els.aReceipt.textContent = fmt(r.receipt);
-    els.aCredit.textContent = '−' + fmt(r.credit);
+    els.aCredit.textContent = '−' + fmt(r.creditA);
     els.aCapTax.textContent = '+' + fmt(r.capTax);
     els.aCost.textContent = fmt(r.costA);
     els.bReceipt.textContent = fmt(r.receipt);
-    els.bCredit.textContent = '−' + fmt(r.credit);
+    els.bCredit.textContent = '−' + fmt(r.creditB);
     els.bCost.textContent = fmt(r.costB);
 
-    els.savingsBlock.hidden = !r.hasGain;
+    // Headline saving. Hidden when there's no gain, or when a heavy cap has
+    // pushed the year-one saving to zero or below (the note carries the story).
+    var showSavings = r.hasGain && r.savings > 0.005;
+    els.savingsBlock.hidden = !showSavings;
     els.noGain.hidden = r.hasGain;
-    if (r.hasGain) {
+    if (showSavings) {
       if (animate) tweenTo(r.savings);
       else { tweenTarget = r.savings; renderSavings(r.savings); }
     } else {
       tweenTarget = 0;
       renderSavings(0);
     }
+
+    var capped = r.cappedA || r.cappedB;
+    els.limitNote.hidden = !capped;
+    if (capped) els.limitNote.textContent = limitNote(r);
   }
 
   // Province dropdown, 13 options.
