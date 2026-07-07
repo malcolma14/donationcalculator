@@ -1,0 +1,398 @@
+/* Giving gap calculator — widget styles.
+   Recreates the Claude Design prototype (Giving Gap Calculator.dc.html). */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--sgb-bg-tint);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--sgb-mid-blue);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--sgb-dark-blue);
+  text-decoration: underline;
+}
+a:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: 2px;
+}
+
+input::placeholder { color: var(--sgb-ink-300); }
+
+.gg-page {
+  padding: 48px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.gg-widget {
+  width: 100%;
+  max-width: 1120px;
+  background: var(--sgb-white);
+  border: 1px solid var(--sgb-bg-cool);
+  border-radius: 12px;
+  padding: clamp(28px, 5vw, 56px);
+}
+
+/* 1 · Header block */
+.gg-header {
+  max-width: 640px;
+  margin-bottom: 40px;
+}
+.gg-header h1 {
+  margin: 0 0 16px;
+  font-size: clamp(28px, 4.5vw, 40px);
+  line-height: 1.15;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--sgb-dark-blue);
+  text-align: left;
+}
+.gg-header p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--sgb-ink-700);
+  font-weight: 400;
+}
+
+/* 2 + 3 · Inputs left / results right */
+.gg-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(28px, 4vw, 48px);
+  align-items: flex-start;
+}
+
+/* Inputs panel */
+.gg-inputs {
+  flex: 1 1 260px;
+  min-width: 260px;
+  max-width: 460px;
+  display: grid;
+  gap: 22px;
+}
+.gg-field {
+  display: grid;
+  gap: 6px;
+}
+.gg-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sgb-dark-blue);
+}
+.gg-field .gg-hint {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--sgb-ink-500);
+}
+.gg-currency {
+  position: relative;
+}
+.gg-currency .gg-dollar {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: var(--sgb-slate);
+}
+.gg-field input[type="text"],
+.gg-field input[type="email"],
+.gg-field select {
+  width: 100%;
+  height: 46px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--sgb-dark-blue);
+  background: var(--sgb-white);
+  border: 1px solid var(--sgb-bg-cool);
+  border-radius: 6px;
+  outline: none;
+}
+.gg-field .gg-currency input {
+  padding-left: 28px;
+  font-variant-numeric: tabular-nums;
+}
+.gg-field select {
+  appearance: auto;
+  cursor: pointer;
+}
+.gg-field input:focus,
+.gg-field select:focus {
+  border-color: var(--sgb-mid-blue);
+  box-shadow: var(--shadow-focus);
+}
+
+/* Results panel */
+.gg-results {
+  flex: 1.7 1 340px;
+  min-width: 280px;
+  position: relative;
+}
+.gg-rhombus {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 150px;
+  height: 230px;
+  background: var(--sgb-light-blue);
+  opacity: 0.09;
+  transform: skewX(-18deg);
+  pointer-events: none;
+}
+.gg-cards {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+.gg-card {
+  background: var(--sgb-white);
+  border: 1px solid var(--sgb-bg-cool);
+  border-radius: 8px;
+  padding: 22px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+.gg-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sgb-ink-700);
+  min-height: 40px;
+}
+.gg-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--sgb-ink-500);
+}
+.gg-row .gg-val {
+  font-variant-numeric: tabular-nums;
+  color: var(--sgb-ink-700);
+}
+.gg-total {
+  border-top: 1px solid var(--sgb-bg-cool);
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+.gg-total .gg-total-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sgb-dark-blue);
+}
+.gg-total .gg-total-val {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--sgb-dark-blue);
+}
+
+/* Card B, the hero: Mid Blue border + header band */
+.gg-card-hero {
+  border: 1.5px solid var(--sgb-mid-blue);
+  border-radius: 8px;
+  overflow: hidden;
+  display: grid;
+  align-content: start;
+  background: var(--sgb-white);
+}
+.gg-card-hero .gg-band {
+  background: var(--sgb-mid-blue);
+  color: var(--sgb-white);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 22px;
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+}
+.gg-card-hero .gg-card-body {
+  padding: 12px 22px 22px;
+  display: grid;
+  gap: 12px;
+}
+.gg-card-hero .gg-zero {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--sgb-mid-blue);
+}
+.gg-card-hero .gg-total-val {
+  color: var(--sgb-mid-blue);
+}
+
+/* Savings line — the reveal */
+.gg-savings {
+  position: relative;
+  margin-top: 28px;
+}
+.gg-savings-lead {
+  font-size: 16px;
+  color: var(--sgb-ink-700);
+}
+.gg-savings-figure {
+  font-size: clamp(40px, 6vw, 56px);
+  line-height: 1.1;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--sgb-mid-blue);
+  margin: 4px 0 8px;
+}
+.gg-savings-sub {
+  font-size: 15px;
+  color: var(--sgb-ink-500);
+}
+.gg-no-gain {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--sgb-ink-700);
+  max-width: 56ch;
+}
+
+/* 4 · One-line explainer */
+.gg-explainer {
+  position: relative;
+  margin: 24px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--sgb-ink-500);
+  max-width: 62ch;
+}
+
+/* 5 · Email capture */
+.gg-capture {
+  margin-top: 48px;
+  background: var(--sgb-bg-tint);
+  border-radius: 8px;
+  padding: clamp(24px, 4vw, 36px);
+}
+.gg-capture-form {
+  display: grid;
+  gap: 16px;
+}
+.gg-capture h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--sgb-dark-blue);
+}
+.gg-capture p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--sgb-ink-700);
+  max-width: 62ch;
+}
+.gg-capture-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.gg-capture-fields .gg-field label { font-size: 13px; }
+.gg-field-name { flex: 1 1 160px; display: grid; gap: 4px; }
+.gg-field-email { flex: 2 1 220px; display: grid; gap: 4px; }
+.gg-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--sgb-ink-700);
+  cursor: pointer;
+  max-width: 62ch;
+}
+.gg-consent input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--sgb-mid-blue);
+  flex-shrink: 0;
+}
+.gg-consent input[type="checkbox"]:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: 2px;
+}
+.gg-form-error {
+  font-size: 13px;
+  color: var(--sgb-error);
+}
+.gg-submit {
+  min-height: 46px;
+  padding: 12px 24px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sgb-white);
+  background: var(--sgb-mid-blue);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-standard);
+  outline: none;
+}
+.gg-submit:hover { background: var(--sgb-dark-blue); }
+.gg-submit:focus-visible { box-shadow: var(--shadow-focus); }
+
+.gg-capture-sent {
+  display: grid;
+  gap: 10px;
+}
+.gg-capture-sent h2 { margin: 0; }
+.gg-capture-sent a {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sgb-mid-blue);
+}
+
+/* 6 · Footer */
+.gg-footer {
+  margin-top: 40px;
+  border-top: 1px solid var(--sgb-bg-cool);
+  padding-top: 24px;
+  display: grid;
+  gap: 16px;
+}
+.gg-footer p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--sgb-slate);
+  max-width: 84ch;
+}
+.gg-footer-byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+.gg-footer-byline img {
+  height: 40px;
+  width: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.gg-footer-byline span {
+  font-size: 13px;
+  color: var(--sgb-ink-500);
+}
+
+[hidden] { display: none !important; }

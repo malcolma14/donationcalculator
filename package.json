@@ -1,0 +1,11 @@
+{
+  "name": "giving-gap-calculator",
+  "version": "1.0.0",
+  "description": "Compares the after-tax cost of donating cash versus donating publicly traded shares directly to charity. Static, embeddable widget for Adam Malcolm, Strategic Generosity, IG Wealth Management.",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/",
+    "start": "npx http-server -p 8080 ."
+  },
+  "license": "UNLICENSED"
+}

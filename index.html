@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giving gap calculator</title>
+<meta name="description" content="Compare the after-tax cost of donating cash versus donating publicly traded shares directly to charity.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/widget.css">
+</head>
+<body>
+
+<div class="gg-page">
+  <div class="gg-widget">
+
+    <!-- 1 · Header block -->
+    <div class="gg-header">
+      <h1>The same gift can cost you two different amounts</h1>
+      <p>If you own shares that have grown in value, how you give matters almost as much as how much. Four numbers and you'll see the difference.</p>
+    </div>
+
+    <!-- 2 + 3 · Inputs left / results right -->
+    <div class="gg-body">
+
+      <!-- Inputs panel -->
+      <div class="gg-inputs">
+
+        <div class="gg-field">
+          <label for="gg-province">Where do you live?</label>
+          <select id="gg-province"></select>
+        </div>
+
+        <div class="gg-field">
+          <label for="gg-income">Your annual income (before tax)</label>
+          <div class="gg-currency">
+            <span class="gg-dollar" aria-hidden="true">$</span>
+            <input id="gg-income" type="text" inputmode="numeric" autocomplete="off" value="150,000">
+          </div>
+          <span class="gg-hint">Your best guess is fine. This sets your tax rate.</span>
+        </div>
+
+        <div class="gg-field">
+          <label for="gg-worth">What are the shares worth today?</label>
+          <div class="gg-currency">
+            <span class="gg-dollar" aria-hidden="true">$</span>
+            <input id="gg-worth" type="text" inputmode="numeric" autocomplete="off" value="25,000">
+          </div>
+          <span class="gg-hint">This is the amount the charity receives either way.</span>
+        </div>
+
+        <div class="gg-field">
+          <label for="gg-paid">What did you pay for them?</label>
+          <div class="gg-currency">
+            <span class="gg-dollar" aria-hidden="true">$</span>
+            <input id="gg-paid" type="text" inputmode="numeric" autocomplete="off" value="10,000">
+          </div>
+          <span class="gg-hint">Roughly. We use this to estimate the capital gain.</span>
+        </div>
+
+      </div>
+
+      <!-- Results panel -->
+      <div class="gg-results">
+
+        <div class="gg-rhombus" aria-hidden="true"></div>
+
+        <div class="gg-cards">
+
+          <!-- Card A: sell first -->
+          <div class="gg-card">
+            <div class="gg-card-title">Sell the shares, donate the cash</div>
+            <div class="gg-row"><span>Donation receipt</span><span class="gg-val" id="gg-a-receipt"></span></div>
+            <div class="gg-row"><span>Tax credit</span><span class="gg-val" id="gg-a-credit"></span></div>
+            <div class="gg-row"><span>Capital gains tax on the sale</span><span class="gg-val" id="gg-a-captax"></span></div>
+            <div class="gg-total">
+              <span class="gg-total-label">True cost of your gift</span>
+              <span class="gg-total-val" id="gg-a-cost"></span>
+            </div>
+          </div>
+
+          <!-- Card B: donate in kind (the hero) -->
+          <div class="gg-card-hero">
+            <div class="gg-band">Donate the shares directly</div>
+            <div class="gg-card-body">
+              <div class="gg-row"><span>Donation receipt</span><span class="gg-val" id="gg-b-receipt"></span></div>
+              <div class="gg-row"><span>Tax credit</span><span class="gg-val" id="gg-b-credit"></span></div>
+              <div class="gg-row"><span>Capital gains tax</span><span class="gg-zero">$0</span></div>
+              <div class="gg-total">
+                <span class="gg-total-label">True cost of your gift</span>
+                <span class="gg-total-val" id="gg-b-cost"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Savings line -->
+        <div class="gg-savings" aria-live="polite">
+          <div id="gg-savings-block">
+            <div class="gg-savings-lead">Donating the shares directly saves you</div>
+            <div class="gg-savings-figure" id="gg-savings"></div>
+            <div class="gg-savings-sub">Same gift to the charity. Less tax.</div>
+          </div>
+          <p class="gg-no-gain" id="gg-no-gain" hidden>Your shares haven't grown, so there's no capital gains advantage here. In fact, if they've dropped, selling first may let you claim the loss. That's a conversation worth having.</p>
+        </div>
+
+        <!-- 4 · One-line explainer -->
+        <p class="gg-explainer">When you donate publicly traded shares directly to a registered charity, the capital gain is taxed at a rate of zero. Sell them first and give the cash, and half the gain is taxed at your marginal rate. Same generosity, different bill.</p>
+
+      </div>
+    </div>
+
+    <!-- 5 · Email capture -->
+    <div class="gg-capture">
+      <form class="gg-capture-form" id="gg-form" novalidate>
+        <div>
+          <h2>Want to actually do this?</h2>
+          <p>Donating shares takes a form and a few days, not a finance degree. Leave your email and I'll send you a short guide: how the transfer works, why timing matters before year-end, and the questions worth asking first.</p>
+        </div>
+        <div class="gg-capture-fields">
+          <div class="gg-field gg-field-name">
+            <label for="gg-name">First name</label>
+            <input id="gg-name" type="text" autocomplete="given-name">
+          </div>
+          <div class="gg-field gg-field-email">
+            <label for="gg-email">Email</label>
+            <input id="gg-email" type="email" autocomplete="email">
+          </div>
+        </div>
+        <label class="gg-consent">
+          <input type="checkbox" id="gg-consent">
+          <span>Yes, send me the guide and occasional ideas on strategic generosity. Unsubscribe anytime.</span>
+        </label>
+        <div class="gg-form-error" id="gg-form-error" role="alert" hidden></div>
+        <div>
+          <button type="submit" class="gg-submit">Send me the guide</button>
+        </div>
+      </form>
+      <div class="gg-capture-sent" id="gg-sent" aria-live="polite" hidden>
+        <h2>It's on the way.</h2>
+        <p>Check your inbox in the next few minutes. And if your numbers raised a question you'd rather talk through with a person, that's what I'm here for.</p>
+        <a href="#">Book a conversation, no agenda required.</a>
+      </div>
+    </div>
+
+    <!-- 6 · Footer -->
+    <div class="gg-footer">
+      <p>This calculator is for education only and is not financial, tax, or legal advice. Rates reflect EY's published combined federal and provincial tables including provincial surtaxes; the Ontario Health Premium is not modelled, and the capital gain is not stacked on income when determining the marginal rate.</p>
+      <p id="gg-rates-stamp"></p>
+      <div class="gg-footer-byline">
+        <img src="assets/ig-logo.jpg" alt="IG Wealth Management">
+        <span>Prepared by Adam Malcolm, CFP, MFA-P, IG Wealth Management</span>
+      </div>
+      <p>Your numbers are processed in your browser and never stored. Only your name and email are collected, and only if you ask for the guide.</p>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/calculator.js"></script>
+<script src="js/widget.js"></script>
+</body>
+</html>
