@@ -133,13 +133,23 @@
         </label>
         <div class="gg-form-error" id="gg-form-error" role="alert" hidden></div>
         <div>
-          <button type="submit" class="gg-submit">Send me the guide</button>
+          <button type="submit" class="gg-submit" id="gg-submit">Send me the guide</button>
         </div>
       </form>
       <div class="gg-capture-sent" id="gg-sent" aria-live="polite" hidden>
         <h2>It's on the way.</h2>
         <p>Check your inbox in the next few minutes. And if your numbers raised a question you'd rather talk through with a person, that's what I'm here for.</p>
-        <a href="#">Book a conversation, no agenda required.</a>
+        <p class="gg-book-cta">
+          <a href="#" id="gg-book-link" aria-expanded="false" aria-controls="gg-booking">Book a conversation, no agenda required.</a>
+          <a href="https://outlook.office.com/book/AdamMalcolmConsultantIGWealthManagementOnlineBooking@igmfinancial.net/?ismsaljsauthenabled" id="gg-book-newtab" class="gg-book-newtab" target="_blank" rel="noopener">Open in a new tab</a>
+        </p>
+        <div class="gg-booking" id="gg-booking" hidden>
+          <iframe
+            title="Book a conversation with Adam Malcolm"
+            src="https://outlook.office.com/book/AdamMalcolmConsultantIGWealthManagementOnlineBooking@igmfinancial.net/?ismsaljsauthenabled"
+            loading="lazy"
+            scrolling="yes"></iframe>
+        </div>
       </div>
     </div>
 
