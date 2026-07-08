@@ -39,10 +39,14 @@
     paid: document.getElementById('gg-paid'),
     aReceipt: document.getElementById('gg-a-receipt'),
     aCredit: document.getElementById('gg-a-credit'),
+    aUnclaimedRow: document.getElementById('gg-a-unclaimed-row'),
+    aUnclaimed: document.getElementById('gg-a-unclaimed'),
     aCapTax: document.getElementById('gg-a-captax'),
     aCost: document.getElementById('gg-a-cost'),
     bReceipt: document.getElementById('gg-b-receipt'),
     bCredit: document.getElementById('gg-b-credit'),
+    bUnclaimedRow: document.getElementById('gg-b-unclaimed-row'),
+    bUnclaimed: document.getElementById('gg-b-unclaimed'),
     bCost: document.getElementById('gg-b-cost'),
     savingsBlock: document.getElementById('gg-savings-block'),
     savings: document.getElementById('gg-savings'),
@@ -170,10 +174,14 @@
 
     els.aReceipt.textContent = fmt(r.receipt);
     els.aCredit.textContent = '−' + fmt(r.creditA);
+    els.aUnclaimedRow.hidden = !r.cappedA;
+    els.aUnclaimed.textContent = fmt(r.deferredA);
     els.aCapTax.textContent = '+' + fmt(r.capTax);
     els.aCost.textContent = fmt(r.costA);
     els.bReceipt.textContent = fmt(r.receipt);
     els.bCredit.textContent = '−' + fmt(r.creditB);
+    els.bUnclaimedRow.hidden = !r.cappedB;
+    els.bUnclaimed.textContent = fmt(r.deferredB);
     els.bCost.textContent = fmt(r.costB);
 
     // Headline saving. Hidden when there's no gain, or when a heavy cap has
@@ -191,7 +199,8 @@
 
     var capped = r.cappedA || r.cappedB;
     els.limitNote.hidden = !capped;
-    if (capped) els.limitNote.textContent = limitNote(r);
+    // The dagger ties the note back to the "Not claimable this year" card line.
+    if (capped) els.limitNote.textContent = '† ' + limitNote(r);
   }
 
   // Province dropdown, 13 options.
